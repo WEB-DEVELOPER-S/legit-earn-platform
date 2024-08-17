@@ -11,11 +11,11 @@
 <body>
 <?php include('include/header.php');?>
 
-<br>
-<div class="alert alert-success alert-dismissible fade show center"  role="alert">
-          Welcome to <b>Legit-Earn</b>,  (this is sample text)
-          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
+
+
+
+
+
 
 
 
