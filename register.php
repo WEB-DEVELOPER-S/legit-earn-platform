@@ -21,11 +21,24 @@
             border-radius: 10px;
             background-color: #f9f9f9;
         }
+        .color-blue{
+            color: blue;
+       }
+       @media screen and (max-width: 800px) {
+      .container{
+      width: 90%;
+    }
+  }
     </style>
 </head>
 <body>
     <div class="container form-container">
         <h2 class="text-center">Register</h2>
+        <!-- who invite you? -->
+        <div class="alert alert-success alert-dismissible fade show center"  role="alert">
+          You are brought by: <b>Furaha</b>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
         <form>
             <div class="form-group">
                 <label for="name">Name</label>
@@ -44,6 +57,7 @@
                 <input type="password" class="form-control" id="password" placeholder="Enter your password" required>
             </div>
             <button type="submit" class="btn btn-primary btn-block">Register</button>
+            <p class="center">Already have account? <b class="color-blue">Sign In here</b></p>
         </form>
     </div>
 

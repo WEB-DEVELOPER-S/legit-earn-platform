@@ -3,6 +3,9 @@
     text-align: center;
     margin: 10px;
 }
+.color-blue{
+    color: blue;
+}
 /* registration frm style */
 .form-container {
     max-width: 500px;
