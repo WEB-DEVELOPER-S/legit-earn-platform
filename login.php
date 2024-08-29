@@ -55,11 +55,18 @@ $conn->close();
             font-family: Arial, sans-serif;
             background-color: #f7f7f7;
             display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+            flex-direction: column;
+            min-height: 100vh;
             margin: 0;
             padding: 10px;
+            box-sizing: border-box;
+        }
+        .content {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
             box-sizing: border-box;
         }
         .login-container {
@@ -115,6 +122,16 @@ $conn->close();
         a:hover {
             text-decoration: underline;
         }
+        .footer {
+            padding: 20px 0;
+            text-align: center;
+            width: 100%;
+            margin-top: auto;
+        }
+        .footer a {
+            text-decoration: none;
+        }
+
         @media (max-width: 600px) {
             .login-container {
                 padding: 15px;
@@ -133,26 +150,39 @@ $conn->close();
     </style>
 </head>
 <body>
-    
-    <div class="login-container">
-    <h1 style="text-align:center;">LEGIT💲EARN</h1>
-        <h2><br></h2>
-        <?php if (!empty($errors)) { ?>
-            <div class="error">
-                <?php foreach ($errors as $error) { echo $error . "<br>"; } ?>
-            </div>
-        <?php } ?>
-        <form method="POST" action="">
-            <label for="username_or_email">Username or Email:</label><br>
-            <input type="text" name="username_or_email" id="username_or_email" required><br>
+    <div class="content">
+        <div class="login-container">
+            <h1 style="text-align:center;">LEGIT💲EARN</h1>
+            <h2><br></h2>
+            <?php if (!empty($errors)) { ?>
+                <div class="error">
+                    <?php foreach ($errors as $error) { echo $error . "<br>"; } ?>
+                </div>
+            <?php } ?>
+            <form method="POST" action="">
+                <label for="username_or_email">Username or Email:</label><br>
+                <input type="text" name="username_or_email" id="username_or_email" required><br>
 
-            <label for="password">Password:</label><br>
-            <input type="password" name="password" id="password" required><br>
+                <label for="password">Password:</label><br>
+                <input type="password" name="password" id="password" required><br>
 
-            <button type="submit">Login</button>
-        </form>
-        <p>Don't have an account? <a href="register.php">Register</a></p>
-        <h2><br></h2>
+                <button type="submit">Login</button>
+            </form>
+            <p>Don't have an account? <a href="register.php">Register</a></p>
+            <h2><br></h2>
+        </div>
     </div>
+
+    <?php
+    $page_title = "LEGIT 💲 EARN";
+    $email_contact = "kejooelyse@gmail.com";
+    ?>
+
+    <!-- Footer Section -->
+    <div class="footer">
+        <p>Copyright © 2025 <a href="#"><?php echo $page_title; ?></a>. Designed by 
+            <a href="">Web Developers Limited</a>. All rights reserved.</p>
+    </div>
+
 </body>
 </html>

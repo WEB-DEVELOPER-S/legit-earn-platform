@@ -41,16 +41,20 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
                 // Hash the password
                 $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
+                // Generate a referral code based on the username
+                $referral_code = strtolower($username);
+
                 // Set default account status
                 $status = 'Inactive';
                 $payment_status = 'Unpaid';
 
                 // Insert new user
-                $query = "INSERT INTO users (username, email, phone_number, password, status, payment_status) VALUES (?, ?, ?, ?, ?, ?)";
+                $query = "INSERT INTO users (username, email, phone_number, password, status, payment_status, referral_code, referred_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
                 $stmt = $conn->prepare($query);
-                $stmt->bind_param('ssssss', $username, $email, $phone_number, $hashed_password, $status, $payment_status);
+                $stmt->bind_param('ssssssss', $username, $email, $phone_number, $hashed_password, $status, $payment_status, $referral_code, $referrer_name);
 
                 if ($stmt->execute()) {
+                    $_SESSION['referral_code'] = $referral_code; // Store referral code in session
                     header("Location: payment.php");
                     exit();
                 } else {
@@ -77,9 +81,10 @@ $conn->close();
         body {
             background-color: #f7f7f7;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
+            justify-content: space-between;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
             margin: 0;
             padding: 10px;
         }
@@ -109,6 +114,14 @@ $conn->close();
         .alert {
             text-align: center;
         }
+        .footer {
+            padding: 20px 0;
+            text-align: center;
+            width: 100%;
+        }
+        .footer a {
+            text-decoration: none;
+        }
         @media (max-width: 576px) {
             .form-container {
                 padding: 10px;
@@ -120,7 +133,7 @@ $conn->close();
 <?php include('include/header.php'); ?>
 
 <div class="container form-container">
-    <h2 class="text-center">Register</h2>
+    <h2 class="text-center">LEGIT💲EARN</h2>
     <div class="alert alert-success alert-dismissible fade show center" role="alert">
         You are brought by: <b><?php echo $referrer_name; ?></b>
         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -156,6 +169,16 @@ $conn->close();
     </form>
 </div>
 
+<?php
+$page_title = "LEGIT 💲 EARN";
+$email_contact = "kejooelyse@gmail.com";
+?>
+<!-- Footer Section -->
+<div class="footer">
+    <p>Copyright © 2025 <a href="#"><?php echo $page_title; ?></a>. Designed by 
+        <a href="">Web Developers Limited</a>. All rights reserved.</p>
+</div>
+
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
@@ -181,6 +204,5 @@ $conn->close();
         });
     });
 </script>
-
 </body>
 </html>
