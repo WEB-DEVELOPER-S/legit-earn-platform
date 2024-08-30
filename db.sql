@@ -1,0 +1,8 @@
+CREATE TABLE IF NOT EXISTS withdraw (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    account VARCHAR(50) NOT NULL,
+    tel_number VARCHAR(15) NOT NULL,
+    amount DECIMAL(10, 2) NOT NULL,
+    status VARCHAR(50) DEFAULT 'pending',
+    requested_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
