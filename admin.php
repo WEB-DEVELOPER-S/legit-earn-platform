@@ -33,8 +33,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $withdrawal_id = $_POST['withdrawal_id'];
         $withdrawal_status = $_POST['withdrawal_status'];
 
-        $sql_update_withdrawal = "UPDATE withdrawal_requests SET status='$withdrawal_status' WHERE id=$withdrawal_id";
+        // Update withdrawal request status
+        $sql_update_withdrawal = "UPDATE withdrawals SET status='$withdrawal_status' WHERE id=$withdrawal_id";
         $conn->query($sql_update_withdrawal);
+
+        // If the status is "Paid", move the request to withdrawal history
+        if ($withdrawal_status == 'Paid') {
+            $sql_move_to_history = "INSERT INTO withdrawals (user_id, payment, status)
+                                    SELECT user_id, payment, status FROM withdrawals WHERE id=$withdrawal_id";
+            $conn->query($sql_move_to_history);
+
+            // Delete the request from the original table after moving to history
+            $sql_delete_withdrawal = "DELETE FROM withdrawals WHERE id=$withdrawal_id";
+            $conn->query($sql_delete_withdrawal);
+        }
+
         header("Location: admin.php");
     }
 
@@ -51,7 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $withdrawal_id = $_POST['withdrawal_id'];
 
         // Delete withdrawal request
-        $sql_delete_withdrawal = "DELETE FROM withdrawal_requests WHERE id=$withdrawal_id";
+        $sql_delete_withdrawal = "DELETE FROM withdrawals WHERE id=$withdrawal_id";
         $conn->query($sql_delete_withdrawal);
         header("Location: admin.php");
     }
@@ -156,6 +169,11 @@ if (isset($_GET['search_query'])) {
         .delete-btn{
             background-color:red;
         }
+        .btn-yellow {
+    background-color: black; /* Yellow color for Pending status */
+    color: #000; /* Black text for better contrast ok  */
+       }
+
     </style>
 </head>
 <body>
@@ -227,45 +245,50 @@ if (isset($_GET['search_query'])) {
     </div>
 
     <div class="container main">
-        <h2>Withdrawal Requests</h2>
-        <table>
-            <tr>
-                <th>Withdrawal ID</th>
-                <th>User ID</th>
-                <th>Amount</th>
-                <th>Status</th>
-                <th>Actions</th>
-            </tr>
-            <?php
-            // Fetch withdrawal requests data
-            $sql_withdrawals = "SELECT * FROM withdrawal";
-            $result_withdrawals = $conn->query($sql_withdrawals);
+    <h2>Withdrawal Requests</h2>
+    <table>
+        <tr>
+            <th>Withdrawal ID</th>
+            <th>User ID</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+        <?php
+        // Fetch withdrawal requests data
+        $sql_withdrawals = "SELECT * FROM withdrawals";
+        $result_withdrawals = $conn->query($sql_withdrawals);
 
-            if ($result_withdrawals->num_rows > 0) {
-                while($row = $result_withdrawals->fetch_assoc()) {
-                    echo "<tr>
-                            <td>" . $row["id"]. "</td>
-                            <td>" . $row["user_id"]. "</td>
-                            <td>" . $row["amount"]. "</td>
-                            <td>
-                                <form method='POST' action=''>
-                                    <select name='withdrawal_status'>
-                                        <option " . ($row["status"] == 'Paid' ? 'selected' : '') . ">Paid</option>
-                                        <option " . ($row["status"] == 'Pending' ? 'selected' : '') . ">Pending</option>
-                                    </select>
-                                    <input type='hidden' name='withdrawal_id' value='" . $row["id"] . "'>
-                                    <button type='submit' name='update_withdrawal_status'>Update Status</button>
-                                    <button type='submit' name='delete_withdrawal' class='delete-btn'>Delete</button>
-                                </form>
-                            </td>
-                          </tr>";
-                }
-            } else {
-                echo "<tr><td colspan='5'>No withdrawal requests found</td></tr>";
+        if ($result_withdrawals->num_rows > 0) {
+            while($row = $result_withdrawals->fetch_assoc()) {
+                $status_button_color = ($row["status"] == 'Paid') ? 'btn-green' : 'btn-yellow';
+                echo "<tr>
+                        <td>" . $row["id"]. "</td>
+                        <td>" . $row["user_id"]. "</td>
+                        <td>" . $row["payment"]. "</td>
+                        <td>
+                            <button class='update-btn $status_button_color'>" . $row["status"] . "</button>
+                        </td>
+                        <td>
+                            <form method='POST' action=''>
+                                <select name='withdrawal_status'>
+                                    <option " . ($row["status"] == 'Paid' ? 'selected' : '') . ">Paid</option>
+                                    <option " . ($row["status"] == 'Pending' ? 'selected' : '') . ">Pending</option>
+                                </select>
+                                <input type='hidden' name='withdrawal_id' value='" . $row["id"] . "'>
+                                <button type='submit' name='update_withdrawal_status'>Update Status</button>
+                                <button type='submit' name='delete_withdrawal' class='delete-btn'>Delete</button>
+                            </form>
+                        </td>
+                      </tr>";
             }
-            ?>
-        </table>
-    </div>
+        } else {
+            echo "<tr><td colspan='5'>No withdrawal requests found</td></tr>";
+        }
+        ?>
+    </table>
+</div>
+
     <p style="text-align:center">&copy;copyright 2025  <b style="color:green">legit 💲 earn</b></p>
 </body>
 </html>
